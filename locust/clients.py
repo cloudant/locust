@@ -1,5 +1,5 @@
 import re
-import time
+import reltime
 from datetime import timedelta
 from urlparse import urlparse, urlunparse
 
@@ -107,12 +107,12 @@ class HttpSession(requests.Session):
         request_meta = {}
         
         # set up pre_request hook for attaching meta data to the request object
-        request_meta["start_time"] = time.time()
+        request_meta["start_time"] = reltime.reltime()
         
         response = self._send_request_safe_mode(method, url, **kwargs)
         
         # record the consumed time
-        request_meta["response_time"] = int((time.time() - request_meta["start_time"]) * 1000)
+        request_meta["response_time"] = ((reltime.reltime() - request_meta["start_time"]) * 1000)
         
         request_meta["method"] = response.request.method
         request_meta["name"] = name or (response.history and response.history[0] or response).request.path_url

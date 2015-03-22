@@ -1,4 +1,4 @@
-import time
+import reltime
 import gevent
 import hashlib
 
@@ -46,7 +46,7 @@ class RequestStats(object):
         """
         Go through all stats entries and reset them to zero
         """
-        self.start_time = time.time()
+        self.start_time = reltime.reltime()
         self.num_requests = 0
         self.num_failures = 0
         for r in self.entries.itervalues():
@@ -121,14 +121,14 @@ class StatsEntry(object):
         self.reset()
     
     def reset(self):
-        self.start_time = time.time()
+        self.start_time = reltime.reltime()
         self.num_requests = 0
         self.num_failures = 0
         self.total_response_time = 0
         self.response_times = {}
         self.min_response_time = None
         self.max_response_time = 0
-        self.last_request_timestamp = int(time.time())
+        self.last_request_timestamp = int(self.start_time)
         self.num_reqs_per_sec = {}
         self.total_content_length = 0
     
@@ -143,7 +143,7 @@ class StatsEntry(object):
         self.total_content_length += content_length
 
     def _log_time_of_request(self):
-        t = int(time.time())
+        t = reltime.reltime()
         self.num_reqs_per_sec[t] = self.num_reqs_per_sec.setdefault(t, 0) + 1
         self.last_request_timestamp = t
         self.stats.last_request_timestamp = t
